@@ -1,8 +1,6 @@
 import {
 	IDataObject,
 	IExecuteFunctions,
-	IHttpRequestMethods,
-	IHttpRequestOptions,
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
@@ -10,21 +8,24 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 
-async function openAssetApiRequest(
-	this: IExecuteFunctions,
-	method: IHttpRequestMethods,
-	resource: string,
-	body?: IDataObject,
-) {
-	const options: IHttpRequestOptions = {
-		method,
-		url: resource,
-		body,
-		json: true,
-	};
+import { fileDescription, fileOperations } from './resources/file';
+import { projectDescription, projectOperations } from './resources/project';
+import {
+	projectKeywordDescription,
+	projectKeywordOperations,
+} from './resources/projectKeyword';
 
-	return this.helpers.httpRequestWithAuthentication.call(this, 'openAssetApi', options);
-}
+type OpenAssetResponse = IDataObject | IDataObject[];
+type OpenAssetOperationHandler = (
+	this: IExecuteFunctions,
+	itemIndex: number,
+) => Promise<OpenAssetResponse>;
+
+const openAssetOperations: Record<string, Record<string, OpenAssetOperationHandler>> = {
+	file: fileOperations,
+	project: projectOperations,
+	projectKeyword: projectKeywordOperations,
+};
 
 export class OpenAsset implements INodeType {
 	description: INodeTypeDescription = {
@@ -38,6 +39,7 @@ export class OpenAsset implements INodeType {
 		defaults: {
 			name: 'OpenAsset',
 		},
+		usableAsTool: true,
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
 		requestDefaults: {
@@ -58,6 +60,7 @@ export class OpenAsset implements INodeType {
 				displayName: 'Resource',
 				name: 'resource',
 				type: 'options',
+				noDataExpression: true,
 				options: [
 					{
 						name: 'File',
@@ -67,115 +70,16 @@ export class OpenAsset implements INodeType {
 						name: 'Project',
 						value: 'project',
 					},
+					{
+						name: 'Project Keyword',
+						value: 'projectKeyword',
+					},
 				],
 				default: 'file',
 			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['file'],
-					},
-				},
-				options: [
-					{
-						name: 'Get',
-						value: 'get',
-					},
-					{
-						name: 'Create',
-						value: 'create',
-					},
-					{
-						name: 'Delete',
-						value: 'delete',
-					},
-					{
-						name: 'List',
-						value: 'list',
-					},
-				],
-				default: 'get',
-			},
-			{
-				displayName: 'Operation',
-				name: 'operation',
-				type: 'options',
-				displayOptions: {
-					show: {
-						resource: ['project'],
-					},
-				},
-				options: [
-					{
-						name: 'Get',
-						value: 'get',
-					},
-					{
-						name: 'Create',
-						value: 'create',
-					},
-					{
-						name: 'List',
-						value: 'list',
-					},
-				],
-				default: 'get',
-			},
-			{
-				displayName: 'File ID',
-				name: 'fileId',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['file'],
-						operation: ['get', 'delete'],
-					},
-				},
-				default: '',
-			},
-			{
-				displayName: 'Project ID',
-				name: 'projectId',
-				type: 'string',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['project'],
-						operation: ['get'],
-					},
-				},
-				default: '',
-			},
-			{
-				displayName: 'Body',
-				name: 'body',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['file'],
-						operation: ['create'],
-					},
-				},
-				default: '{}',
-			},
-			{
-				displayName: 'Body',
-				name: 'body',
-				type: 'json',
-				required: true,
-				displayOptions: {
-					show: {
-						resource: ['project'],
-						operation: ['create'],
-					},
-				},
-				default: '{}',
-			},
+			...fileDescription,
+			...projectDescription,
+			...projectKeywordDescription,
 		],
 	};
 
@@ -187,45 +91,27 @@ export class OpenAsset implements INodeType {
 			try {
 				const resource = this.getNodeParameter('resource', i) as string;
 				const operation = this.getNodeParameter('operation', i) as string;
-				let responseData: IDataObject | IDataObject[];
+				const resourceOperations = openAssetOperations[resource];
 
-				if (resource === 'file') {
-					if (operation === 'get') {
-						const fileId = this.getNodeParameter('fileId', i) as string;
-						responseData = (await openAssetApiRequest.call(this, 'GET', `/Files/${fileId}`)) as IDataObject;
-					} else if (operation === 'create') {
-						const body = this.getNodeParameter('body', i) as IDataObject;
-						responseData = (await openAssetApiRequest.call(this, 'POST', '/Files', body)) as IDataObject;
-					} else if (operation === 'delete') {
-						const fileId = this.getNodeParameter('fileId', i) as string;
-						await openAssetApiRequest.call(this, 'DELETE', `/Files/${fileId}`);
-						responseData = { success: true };
-					} else if (operation === 'list') {
-						responseData = (await openAssetApiRequest.call(this, 'GET', '/Files')) as IDataObject | IDataObject[];
-					} else {
-						throw new NodeOperationError(this.getNode(), `Unsupported file operation: ${operation}`, {
-							itemIndex: i,
-						});
-					}
-				} else if (resource === 'project') {
-					if (operation === 'get') {
-						const projectId = this.getNodeParameter('projectId', i) as string;
-						responseData = (await openAssetApiRequest.call(this, 'GET', `/Projects/${projectId}`)) as IDataObject;
-					} else if (operation === 'create') {
-						const body = this.getNodeParameter('body', i) as IDataObject;
-						responseData = (await openAssetApiRequest.call(this, 'POST', '/Projects', body)) as IDataObject;
-					} else if (operation === 'list') {
-						responseData = (await openAssetApiRequest.call(this, 'GET', '/Projects')) as IDataObject | IDataObject[];
-					} else {
-						throw new NodeOperationError(this.getNode(), `Unsupported project operation: ${operation}`, {
-							itemIndex: i,
-						});
-					}
-				} else {
+				if (resourceOperations === undefined) {
 					throw new NodeOperationError(this.getNode(), `Unsupported resource: ${resource}`, {
 						itemIndex: i,
 					});
 				}
+
+				const operationHandler = resourceOperations[operation];
+
+				if (operationHandler === undefined) {
+					throw new NodeOperationError(
+						this.getNode(),
+						`Unsupported ${resource} operation: ${operation}`,
+						{
+							itemIndex: i,
+						},
+					);
+				}
+
+				const responseData = await operationHandler.call(this, i);
 
 				if (Array.isArray(responseData)) {
 					returnData.push({ json: { data: responseData }, pairedItem: i });
