@@ -1,0 +1,19 @@
+{
+  "displayName": "OpenAsset",
+  "name": "openAsset",
+  "icon": "file:../../icons/github.svg",
+  "group": ["transform"],
+  "version": 1,
+  "description": "OpenAsset Node",
+  "defaults": {
+    "name": "OpenAsset"
+  },
+  "inputs": ["main"],
+  "outputs": ["main"],
+  "credentials": [
+    {
+      "name": "openAssetApi",
+      "required": true
+    }
+  ]
+}
