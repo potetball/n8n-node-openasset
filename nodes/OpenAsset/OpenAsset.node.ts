@@ -31,7 +31,7 @@ export class OpenAsset implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'OpenAsset',
 		name: 'openAsset',
-		icon: 'file:../../icons/github.svg',
+		icon: { light: 'file:../../icons/openasset.png', dark: 'file:../../icons/openasset.png' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
