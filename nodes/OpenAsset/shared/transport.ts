@@ -11,9 +11,16 @@ export async function openAssetApiRequest(
 	resource: string,
 	body?: IDataObject,
 ) {
+	const credentials = await this.getCredentials('openAssetApi');
+	const clientDomain = String(credentials.clientDomain ?? '').trim();
+	const normalizedDomain = clientDomain
+		.replace(/^https?:\/\//, '')
+		.replace(/\.openasset\.com\/?$/i, '');
+	const url = new URL(resource, `https://${normalizedDomain}.openasset.com/REST/1/`).toString();
+
 	const options: IHttpRequestOptions = {
 		method,
-		url: resource,
+		url,
 		body,
 		json: true,
 	};
