@@ -12,11 +12,11 @@ export const projectGetDescription: INodeProperties[] = [
 		displayName: 'Project ID',
 		name: 'projectId',
 		type: 'string',
-		required: true,
 		displayOptions: {
 			show: showOnlyForProjectGet,
 		},
 		default: '',
+		description: 'Optional. When set, the request targets a specific project by ID.',
 	},
 	{
 		displayName: 'Query Parameters',
@@ -27,19 +27,23 @@ export const projectGetDescription: INodeProperties[] = [
 		},
 		default: '{}',
 		description:
-			'Optional query string filters for the request, for example {"alive":1,"name":"Example Project"}',
+			'Optional query string filters. Leave Project ID empty to query the Projects endpoint, for example {"code":"PRJ-1001"}.',
 	},
 ];
 
-export async function getProject(this: IExecuteFunctions, itemIndex: number): Promise<IDataObject> {
-	const projectId = this.getNodeParameter('projectId', itemIndex) as string;
+export async function getProject(
+	this: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject | IDataObject[]> {
+	const projectId = (this.getNodeParameter('projectId', itemIndex) as string).trim();
 	const queryParameters = this.getNodeParameter('queryParameters', itemIndex) as IDataObject;
+	const resource = projectId === '' ? '/Projects' : `/Projects/${projectId}`;
 
 	return (await openAssetApiRequest.call(
 		this,
 		'GET',
-		`/Projects/${projectId}`,
+		resource,
 		undefined,
 		queryParameters,
-	)) as IDataObject;
+	)) as IDataObject | IDataObject[];
 }
