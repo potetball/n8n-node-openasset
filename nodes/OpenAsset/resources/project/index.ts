@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { createProject, projectCreateDescription } from './create';
-import { getProjects } from './getAll';
+import { getProjects, projectListDescription } from './getAll';
 import { getProject, projectGetDescription } from './get';
 
 const showOnlyForProjects = {
@@ -40,6 +40,7 @@ export const projectDescription: INodeProperties[] = [
 		default: 'get',
 	},
 	...projectGetDescription,
+	...projectListDescription,
 	...projectCreateDescription,
 ];
 

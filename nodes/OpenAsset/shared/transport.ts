@@ -10,6 +10,7 @@ export async function openAssetApiRequest(
 	method: IHttpRequestMethods,
 	resource: string,
 	body?: IDataObject,
+	query?: IDataObject,
 ) {
 	const credentials = await this.getCredentials('openAssetApi');
 	const clientDomain = String(credentials.clientDomain ?? '').trim();
@@ -22,6 +23,7 @@ export async function openAssetApiRequest(
 		method,
 		url,
 		body,
+		qs: query,
 		json: true,
 	};
 
