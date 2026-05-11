@@ -121,7 +121,9 @@ export class OpenAsset implements INodeType {
 				const responseData = await operationHandler.call(this, i);
 
 				if (Array.isArray(responseData)) {
-					returnData.push({ json: { data: responseData }, pairedItem: i });
+					for (const responseItem of responseData) {
+						returnData.push({ json: responseItem, pairedItem: i });
+					}
 				} else {
 					returnData.push({ json: responseData, pairedItem: i });
 				}
