@@ -9,5 +9,9 @@ export async function getProjectKeywords(
 		this,
 		'GET',
 		'/ProjectKeywords',
+		undefined,
+		{
+			limit: 0,
+		},
 	)) as IDataObject | IDataObject[];
 }
