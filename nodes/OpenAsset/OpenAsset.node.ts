@@ -9,6 +9,7 @@ import {
 } from 'n8n-workflow';
 
 import { fileDescription, fileOperations } from './resources/file';
+import { keywordDescription, keywordOperations } from './resources/keyword';
 import { projectDescription, projectOperations } from './resources/project';
 import {
 	projectKeywordDescription,
@@ -25,6 +26,7 @@ type OpenAssetOperationHandler = (
 const openAssetOperations: Record<string, Record<string, OpenAssetOperationHandler>> = {
 	field: fieldOperations,
 	file: fileOperations,
+	keyword: keywordOperations,
 	project: projectOperations,
 	projectKeyword: projectKeywordOperations,
 };
@@ -73,6 +75,10 @@ export class OpenAsset implements INodeType {
 						value: 'file',
 					},
 					{
+						name: 'Keyword',
+						value: 'keyword',
+					},
+					{
 						name: 'Project',
 						value: 'project',
 					},
@@ -85,6 +91,7 @@ export class OpenAsset implements INodeType {
 			},
 			...fieldDescription,
 			...fileDescription,
+			...keywordDescription,
 			...projectDescription,
 			...projectKeywordDescription,
 		],
