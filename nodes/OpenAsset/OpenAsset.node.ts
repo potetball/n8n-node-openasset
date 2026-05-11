@@ -14,6 +14,7 @@ import {
 	projectKeywordDescription,
 	projectKeywordOperations,
 } from './resources/projectKeyword';
+import { fieldDescription, fieldOperations } from './resources/field';
 
 type OpenAssetResponse = IDataObject | IDataObject[];
 type OpenAssetOperationHandler = (
@@ -22,6 +23,7 @@ type OpenAssetOperationHandler = (
 ) => Promise<OpenAssetResponse>;
 
 const openAssetOperations: Record<string, Record<string, OpenAssetOperationHandler>> = {
+	field: fieldOperations,
 	file: fileOperations,
 	project: projectOperations,
 	projectKeyword: projectKeywordOperations,
@@ -63,6 +65,10 @@ export class OpenAsset implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Fields',
+						value: 'field',
+					},
+					{
 						name: 'File',
 						value: 'file',
 					},
@@ -77,6 +83,7 @@ export class OpenAsset implements INodeType {
 				],
 				default: 'file',
 			},
+			...fieldDescription,
 			...fileDescription,
 			...projectDescription,
 			...projectKeywordDescription,
