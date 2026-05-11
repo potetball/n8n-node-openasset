@@ -51,16 +51,43 @@ export const projectGetDescription: INodeProperties[] = [
 				description:
 					"Whether to include the project's location details in the response when available",
 			},
+			{
+				displayName: 'Fields',
+				name: 'fields',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to return all field values for the project',
+			},
+			{
+				displayName: 'Project Keywords',
+				name: 'projectKeywords',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to return all project keyword IDs applied to the project',
+			},
+			{
+				displayName: 'Albums',
+				name: 'albums',
+				type: 'boolean',
+				default: false,
+				description: 'Whether to return all album IDs associated with the project',
+			},
 		],
 		description: 'Optional query string flags for the project response',
 	},
 ];
 
 function buildProjectGetQueryParameters(extraQueryParameters: IDataObject): IDataObject {
+	const queryParameterValueMap: Record<string, string> = {
+		fields: 'all',
+		projectKeywords: 'all',
+		albums: 'all',
+	};
+
 	return Object.fromEntries(
 		Object.entries(extraQueryParameters)
 			.filter(([, value]) => value === true)
-			.map(([key]) => [key, '1']),
+			.map(([key]) => [key, queryParameterValueMap[key] ?? '1']),
 	) as IDataObject;
 }
 
