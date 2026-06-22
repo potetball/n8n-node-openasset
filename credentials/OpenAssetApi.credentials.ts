@@ -10,7 +10,7 @@ export class OpenAssetApi implements ICredentialType {
 
 	displayName = 'OpenAsset API';
 
-	icon = {
+	icon: ICredentialType['icon'] = {
 		light: 'file:../icons/openasset.logo.light.svg',
 		dark: 'file:../icons/openasset.logo.dark.svg',
 	};
