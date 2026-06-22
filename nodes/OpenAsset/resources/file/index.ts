@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 import { createFile, fileCreateDescription } from './create';
 import { deleteFile, fileDeleteDescription } from './delete';
-import { getFiles } from './getAll';
+import { getFiles, fileListDescription } from './getAll';
 import { getFile, fileGetDescription } from './get';
 
 const showOnlyForFiles = {
@@ -47,6 +47,7 @@ export const fileDescription: INodeProperties[] = [
 		default: 'get',
 	},
 	...fileGetDescription,
+	...fileListDescription,
 	...fileCreateDescription,
 	...fileDeleteDescription,
 ];

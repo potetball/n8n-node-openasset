@@ -1,5 +1,6 @@
 import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workflow';
 
+import { displayFieldsProperty, withDisplayFieldsQueryParameters } from '../../shared/queryParameters';
 import { openAssetApiRequest } from '../../shared/transport';
 
 const showOnlyForProjectList = {
@@ -143,20 +144,19 @@ export const projectListDescription: INodeProperties[] = [
 		],
 		description: 'Optional query string filters for the Projects endpoint',
 	},
+	displayFieldsProperty({
+		show: showOnlyForProjectList,
+	}),
 ];
-
-function removeEmptyQueryParameters(queryParameters: IDataObject): IDataObject {
-	return Object.fromEntries(
-		Object.entries(queryParameters).filter(([, value]) => value !== '' && value !== undefined),
-	) as IDataObject;
-}
 
 export async function getProjects(
 	this: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject | IDataObject[]> {
-	const queryParameters = removeEmptyQueryParameters(
+	const displayFields = this.getNodeParameter('displayFields', itemIndex, '');
+	const queryParameters = withDisplayFieldsQueryParameters(
 		(this.getNodeParameter('queryParameters', itemIndex, {}) as IDataObject) ?? {},
+		displayFields,
 	);
 
 	return (await openAssetApiRequest.call(

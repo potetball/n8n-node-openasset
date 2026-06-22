@@ -8,9 +8,14 @@ import {
 	NodeOperationError,
 } from 'n8n-workflow';
 
+import { employeeDescription, employeeOperations } from './resources/employee';
 import { fileDescription, fileOperations } from './resources/file';
 import { keywordDescription, keywordOperations } from './resources/keyword';
 import { projectDescription, projectOperations } from './resources/project';
+import {
+	projectCategoryKeywordDescription,
+	projectCategoryKeywordOperations,
+} from './resources/projectCategoryKeyword';
 import {
 	projectKeywordDescription,
 	projectKeywordOperations,
@@ -24,10 +29,12 @@ type OpenAssetOperationHandler = (
 ) => Promise<OpenAssetResponse>;
 
 const openAssetOperations: Record<string, Record<string, OpenAssetOperationHandler>> = {
+	employee: employeeOperations,
 	field: fieldOperations,
 	file: fileOperations,
 	keyword: keywordOperations,
 	project: projectOperations,
+	projectCategoryKeyword: projectCategoryKeywordOperations,
 	projectKeyword: projectKeywordOperations,
 };
 
@@ -67,6 +74,10 @@ export class OpenAsset implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
+						name: 'Employee',
+						value: 'employee',
+					},
+					{
 						name: 'Fields',
 						value: 'field',
 					},
@@ -83,16 +94,22 @@ export class OpenAsset implements INodeType {
 						value: 'project',
 					},
 					{
+						name: 'Project Category Keyword',
+						value: 'projectCategoryKeyword',
+					},
+					{
 						name: 'Project Keyword',
 						value: 'projectKeyword',
 					},
 				],
 				default: 'file',
 			},
+			...employeeDescription,
 			...fieldDescription,
 			...fileDescription,
 			...keywordDescription,
 			...projectDescription,
+			...projectCategoryKeywordDescription,
 			...projectKeywordDescription,
 		],
 	};

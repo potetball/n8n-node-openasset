@@ -1,9 +1,41 @@
-import type { IDataObject, IExecuteFunctions } from 'n8n-workflow';
+import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workflow';
 
+import { buildDisplayFieldsQueryParameter } from '../../shared/queryParameters';
 import { openAssetApiRequest } from '../../shared/transport';
 
-export async function getFields(this: IExecuteFunctions): Promise<IDataObject | IDataObject[]> {
-	return (await openAssetApiRequest.call(this, 'GET', '/Fields', undefined, {
+const showOnlyForFieldList = {
+	resource: ['field'],
+	operation: ['list'],
+};
+
+export const fieldListDescription: INodeProperties[] = [
+	{
+		displayName: 'Display Fields',
+		name: 'displayFields',
+		type: 'string',
+		displayOptions: {
+			show: showOnlyForFieldList,
+		},
+		default: '',
+		description:
+			'Comma-separated list of response field names to return, for example name,created,updated',
+	},
+];
+
+export async function getFields(
+	this: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject | IDataObject[]> {
+	const queryParameters = {
 		limit: 0,
-	})) as IDataObject | IDataObject[];
+		...buildDisplayFieldsQueryParameter(this.getNodeParameter('displayFields', itemIndex, '')),
+	};
+
+	return (await openAssetApiRequest.call(
+		this,
+		'GET',
+		'/Fields',
+		undefined,
+		queryParameters,
+	)) as IDataObject | IDataObject[];
 }

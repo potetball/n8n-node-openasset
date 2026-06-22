@@ -3,18 +3,18 @@ import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workfl
 import { displayFieldsProperty, withDisplayFieldsQueryParameters } from '../../shared/queryParameters';
 import { openAssetApiRequest } from '../../shared/transport';
 
-const showOnlyForKeywordList = {
-	resource: ['keyword'],
+const showOnlyForProjectCategoryKeywordList = {
+	resource: ['projectCategoryKeyword'],
 	operation: ['list'],
 };
 
-export const keywordListDescription: INodeProperties[] = [
+export const projectCategoryKeywordListDescription: INodeProperties[] = [
 	displayFieldsProperty({
-		show: showOnlyForKeywordList,
+		show: showOnlyForProjectCategoryKeywordList,
 	}),
 ];
 
-export async function getKeywords(
+export async function getProjectCategoryKeywords(
 	this: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject | IDataObject[]> {
@@ -23,7 +23,7 @@ export async function getKeywords(
 	return (await openAssetApiRequest.call(
 		this,
 		'GET',
-		'/Keywords',
+		'/ProjectCategoryKeywords',
 		undefined,
 		withDisplayFieldsQueryParameters(
 			{
@@ -31,7 +31,5 @@ export async function getKeywords(
 			},
 			displayFields,
 		),
-	)) as
-		| IDataObject
-		| IDataObject[];
+	)) as IDataObject | IDataObject[];
 }

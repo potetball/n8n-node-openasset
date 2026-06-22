@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { getField, fieldGetDescription } from './get';
-import { getFields } from './getAll';
+import { getFields, fieldListDescription } from './getAll';
 import { fieldUpdateDescription, updateField } from './update';
 
 const showOnlyForFields = {
@@ -40,6 +40,7 @@ export const fieldDescription: INodeProperties[] = [
 		default: 'get',
 	},
 	...fieldGetDescription,
+	...fieldListDescription,
 	...fieldUpdateDescription,
 ];
 

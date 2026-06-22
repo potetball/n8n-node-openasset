@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { getKeyword, keywordGetDescription } from './get';
-import { getKeywords } from './getAll';
+import { getKeywords, keywordListDescription } from './getAll';
 
 const showOnlyForKeywords = {
 	resource: ['keyword'],
@@ -33,6 +33,7 @@ export const keywordDescription: INodeProperties[] = [
 		default: 'get',
 	},
 	...keywordGetDescription,
+	...keywordListDescription,
 ];
 
 export const keywordOperations = {

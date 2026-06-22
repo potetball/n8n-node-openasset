@@ -3,38 +3,41 @@ import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workfl
 import { buildDisplayFieldsQueryParameter, displayFieldsProperty } from '../../shared/queryParameters';
 import { openAssetApiRequest } from '../../shared/transport';
 
-const showOnlyForProjectKeywordGet = {
-	resource: ['projectKeyword'],
+const showOnlyForProjectCategoryKeywordGet = {
+	resource: ['projectCategoryKeyword'],
 	operation: ['get'],
 };
 
-export const projectKeywordGetDescription: INodeProperties[] = [
+export const projectCategoryKeywordGetDescription: INodeProperties[] = [
 	{
-		displayName: 'Project Keyword ID',
-		name: 'projectKeywordId',
+		displayName: 'Project Category Keyword ID',
+		name: 'projectCategoryKeywordId',
 		type: 'string',
 		required: true,
 		displayOptions: {
-			show: showOnlyForProjectKeywordGet,
+			show: showOnlyForProjectCategoryKeywordGet,
 		},
 		default: '',
 	},
 	displayFieldsProperty({
-		show: showOnlyForProjectKeywordGet,
+		show: showOnlyForProjectCategoryKeywordGet,
 	}),
 ];
 
-export async function getProjectKeyword(
+export async function getProjectCategoryKeyword(
 	this: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
-	const projectKeywordId = this.getNodeParameter('projectKeywordId', itemIndex) as string;
+	const projectCategoryKeywordId = this.getNodeParameter(
+		'projectCategoryKeywordId',
+		itemIndex,
+	) as string;
 	const displayFields = this.getNodeParameter('displayFields', itemIndex, '');
 
 	return (await openAssetApiRequest.call(
 		this,
 		'GET',
-		`/ProjectKeywords/${projectKeywordId}`,
+		`/ProjectCategoryKeywords/${projectCategoryKeywordId}`,
 		undefined,
 		buildDisplayFieldsQueryParameter(displayFields),
 	)) as IDataObject;

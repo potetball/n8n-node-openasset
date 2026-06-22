@@ -1,7 +1,7 @@
 import type { INodeProperties } from 'n8n-workflow';
 
 import { getProjectKeyword, projectKeywordGetDescription } from './get';
-import { getProjectKeywords } from './getAll';
+import { getProjectKeywords, projectKeywordListDescription } from './getAll';
 import { projectKeywordUpdateDescription, updateProjectKeyword } from './update';
 
 const showOnlyForProjectKeywords = {
@@ -40,6 +40,7 @@ export const projectKeywordDescription: INodeProperties[] = [
 		default: 'update',
 	},
 	...projectKeywordGetDescription,
+	...projectKeywordListDescription,
 	...projectKeywordUpdateDescription,
 ];
 

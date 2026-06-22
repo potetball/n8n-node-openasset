@@ -3,35 +3,38 @@ import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workfl
 import { buildDisplayFieldsQueryParameter, displayFieldsProperty } from '../../shared/queryParameters';
 import { openAssetApiRequest } from '../../shared/transport';
 
-const showOnlyForKeywordGet = {
-	resource: ['keyword'],
+const showOnlyForEmployeeGet = {
+	resource: ['employee'],
 	operation: ['get'],
 };
 
-export const keywordGetDescription: INodeProperties[] = [
+export const employeeGetDescription: INodeProperties[] = [
 	{
-		displayName: 'Keyword ID',
-		name: 'keywordId',
+		displayName: 'Employee ID',
+		name: 'employeeId',
 		type: 'string',
 		required: true,
 		displayOptions: {
-			show: showOnlyForKeywordGet,
+			show: showOnlyForEmployeeGet,
 		},
 		default: '',
 	},
 	displayFieldsProperty({
-		show: showOnlyForKeywordGet,
+		show: showOnlyForEmployeeGet,
 	}),
 ];
 
-export async function getKeyword(this: IExecuteFunctions, itemIndex: number): Promise<IDataObject> {
-	const keywordId = this.getNodeParameter('keywordId', itemIndex) as string;
+export async function getEmployee(
+	this: IExecuteFunctions,
+	itemIndex: number,
+): Promise<IDataObject> {
+	const employeeId = this.getNodeParameter('employeeId', itemIndex) as string;
 	const displayFields = this.getNodeParameter('displayFields', itemIndex, '');
 
 	return (await openAssetApiRequest.call(
 		this,
 		'GET',
-		`/Keywords/${keywordId}`,
+		`/Employees/${employeeId}`,
 		undefined,
 		buildDisplayFieldsQueryParameter(displayFields),
 	)) as IDataObject;
