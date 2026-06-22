@@ -10,6 +10,11 @@ export class OpenAssetApi implements ICredentialType {
 
 	displayName = 'OpenAsset API';
 
+	icon = {
+		light: 'file:../icons/openasset.logo.light.svg',
+		dark: 'file:../icons/openasset.logo.dark.svg',
+	};
+
 	documentationUrl = 'https://developers.openasset.com/#authentication';
 
 	properties: INodeProperties[] = [

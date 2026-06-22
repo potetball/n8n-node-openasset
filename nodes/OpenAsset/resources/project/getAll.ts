@@ -23,7 +23,7 @@ export const projectListDescription: INodeProperties[] = [
 				displayName: 'Alive',
 				name: 'alive',
 				type: 'options',
-				default: '',
+				default: '1',
 				options: [
 					{
 						name: 'Enabled',

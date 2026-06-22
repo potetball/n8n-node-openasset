@@ -33,7 +33,7 @@ export const projectUpdateDescription: INodeProperties[] = [
 		},
 		default: '{}',
 		description:
-			'JSON body to send to the project update endpoint, for example {"name":"London Bridges Olympic Lighting","code":"ABC123"} or {"fields":[{"id":1,"values":["test"]}]}',
+			'JSON body to send to the project update endpoint, for example {"name":"London Bridges Olympic Lighting","code":"ABC123"}',
 	},
 ];
 

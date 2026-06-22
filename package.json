@@ -1,15 +1,15 @@
 {
 	"name": "n8n-nodes-openasset",
 	"version": "0.1.0",
-	"description": "",
+	"description": "OpenAsset connection",
 	"license": "MIT",
 	"homepage": "",
 	"keywords": [
 		"n8n-community-node-package"
 	],
 	"author": {
-		"name": "",
-		"email": ""
+		"name": "Erik Alvarez",
+		"email": "erik@tyldum.no"
 	},
 	"repository": {
 		"type": "git",

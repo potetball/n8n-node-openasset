@@ -42,7 +42,10 @@ export class OpenAsset implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'OpenAsset',
 		name: 'openAsset',
-		icon: { light: 'file:../../icons/openasset.png', dark: 'file:../../icons/openasset.png' },
+		icon: {
+			light: 'file:../../icons/openasset.logo.light.svg',
+			dark: 'file:../../icons/openasset.logo.dark.svg',
+		},
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
@@ -78,7 +81,7 @@ export class OpenAsset implements INodeType {
 						value: 'employee',
 					},
 					{
-						name: 'Fields',
+						name: 'Field',
 						value: 'field',
 					},
 					{
