@@ -9,6 +9,10 @@ import {
 	getProjectCategoryKeywords,
 	projectCategoryKeywordListDescription,
 } from './getAll';
+import {
+	projectCategoryKeywordUpdateDescription,
+	updateProjectCategoryKeyword,
+} from './update';
 
 const showOnlyForProjectCategoryKeywords = {
 	resource: ['projectCategoryKeyword'],
@@ -42,16 +46,24 @@ export const projectCategoryKeywordDescription: INodeProperties[] = [
 				action: 'List project category keywords',
 				description: 'List project category keyword records',
 			},
+			{
+				name: 'Update',
+				value: 'update',
+				action: 'Update a project category keyword',
+				description: 'Update a project category keyword record',
+			},
 		],
 		default: 'get',
 	},
 	...projectCategoryKeywordGetDescription,
 	...projectCategoryKeywordListDescription,
 	...projectCategoryKeywordCreateDescription,
+	...projectCategoryKeywordUpdateDescription,
 ];
 
 export const projectCategoryKeywordOperations = {
 	create: createProjectCategoryKeyword,
 	get: getProjectCategoryKeyword,
 	list: getProjectCategoryKeywords,
+	update: updateProjectCategoryKeyword,
 };

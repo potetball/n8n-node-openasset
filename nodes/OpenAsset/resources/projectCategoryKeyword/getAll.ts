@@ -23,7 +23,7 @@ export async function getProjectCategoryKeywords(
 	return (await openAssetApiRequest.call(
 		this,
 		'GET',
-		'/ProjectCategoryKeywords',
+		'/ProjectKeywordCategories',
 		undefined,
 		withDisplayFieldsQueryParameters(
 			{

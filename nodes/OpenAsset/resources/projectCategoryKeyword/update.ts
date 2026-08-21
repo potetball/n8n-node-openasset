@@ -1,30 +1,37 @@
 import type { IDataObject, IExecuteFunctions, INodeProperties } from 'n8n-workflow';
 
-import { buildDisplayFieldsQueryParameter, displayFieldsProperty } from '../../shared/queryParameters';
 import { openAssetApiRequest } from '../../shared/transport';
 
-const showOnlyForProjectCategoryKeywordGet = {
+const showOnlyForProjectCategoryKeywordUpdate = {
 	resource: ['projectCategoryKeyword'],
-	operation: ['get'],
+	operation: ['update'],
 };
 
-export const projectCategoryKeywordGetDescription: INodeProperties[] = [
+export const projectCategoryKeywordUpdateDescription: INodeProperties[] = [
 	{
 		displayName: 'Project Category Keyword ID',
 		name: 'projectCategoryKeywordId',
 		type: 'string',
 		required: true,
 		displayOptions: {
-			show: showOnlyForProjectCategoryKeywordGet,
+			show: showOnlyForProjectCategoryKeywordUpdate,
 		},
 		default: '',
 	},
-	displayFieldsProperty({
-		show: showOnlyForProjectCategoryKeywordGet,
-	}),
+	{
+		displayName: 'Body',
+		name: 'body',
+		type: 'json',
+		required: true,
+		displayOptions: {
+			show: showOnlyForProjectCategoryKeywordUpdate,
+		},
+		default: '{}',
+		description: 'Fields to update on the project category keyword, for example {"name":"Updated Name"}',
+	},
 ];
 
-export async function getProjectCategoryKeyword(
+export async function updateProjectCategoryKeyword(
 	this: IExecuteFunctions,
 	itemIndex: number,
 ): Promise<IDataObject> {
@@ -32,13 +39,12 @@ export async function getProjectCategoryKeyword(
 		'projectCategoryKeywordId',
 		itemIndex,
 	) as string;
-	const displayFields = this.getNodeParameter('displayFields', itemIndex, '');
+	const body = this.getNodeParameter('body', itemIndex) as IDataObject;
 
 	return (await openAssetApiRequest.call(
 		this,
-		'GET',
+		'PUT',
 		`/ProjectKeywordCategories/${projectCategoryKeywordId}`,
-		undefined,
-		buildDisplayFieldsQueryParameter(displayFields),
+		body,
 	)) as IDataObject;
 }

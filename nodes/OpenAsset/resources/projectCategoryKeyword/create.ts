@@ -29,7 +29,7 @@ export async function createProjectCategoryKeyword(
 	return (await openAssetApiRequest.call(
 		this,
 		'POST',
-		'/ProjectCategoryKeywords',
+		'/ProjectKeywordCategories',
 		body,
 	)) as IDataObject;
 }
