@@ -5,6 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionTypes,
+	NodeApiError,
 	NodeOperationError,
 } from 'n8n-workflow';
 
@@ -155,14 +156,29 @@ export class OpenAsset implements INodeType {
 					returnData.push({ json: responseData, pairedItem: i });
 				}
 			} catch (error) {
+				if (error instanceof NodeApiError || error instanceof NodeOperationError) {
+					error.context.itemIndex = i;
+				}
+
 				if (this.continueOnFail()) {
 					returnData.push({
 						json: {
 							error: error instanceof Error ? error.message : 'Unknown error',
+							...((error instanceof NodeApiError || error instanceof NodeOperationError) &&
+							error.description
+								? { description: error.description }
+								: {}),
+							...(error instanceof NodeApiError && error.httpCode
+								? { httpCode: error.httpCode }
+								: {}),
 						},
 						pairedItem: i,
 					});
 					continue;
+				}
+
+				if (error instanceof NodeApiError || error instanceof NodeOperationError) {
+					throw error;
 				}
 
 				throw new NodeOperationError(this.getNode(), error as Error, {

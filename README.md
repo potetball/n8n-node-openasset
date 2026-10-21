@@ -2,6 +2,19 @@
 
 # n8n-nodes-starter
 
+## OpenAsset request errors
+
+Failed OpenAsset requests retain n8n's API error type and HTTP status. The error
+description includes the HTTP method, resource path, and the response body returned
+by OpenAsset (including nested validation errors). If OpenAsset returns no body,
+the description states that explicitly. Network errors retain n8n's diagnostics.
+
+With **Continue On Fail** enabled, failed items include `error`, `description`
+(when available), and `httpCode` (when available), while retaining item pairing.
+Successful requests and local parameter validation behave as before.
+
+Run `npm test` to build the node and run the request-error regression tests.
+
 This starter repository helps you build custom integrations for [n8n](https://n8n.io). It includes example nodes, credentials, the node linter, and all the tooling you need to get started.
 
 ## Quick Start

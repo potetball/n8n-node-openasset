@@ -4,6 +4,7 @@ import type {
 	IHttpRequestMethods,
 	IHttpRequestOptions,
 } from 'n8n-workflow';
+import { NodeApiError } from 'n8n-workflow';
 
 export async function openAssetApiRequest(
 	this: IExecuteFunctions,
@@ -29,7 +30,30 @@ export async function openAssetApiRequest(
 		body,
 		qs: query,
 		json: true,
+		returnFullResponse: true,
+		ignoreHttpStatusErrors: true,
 	};
 
-	return this.helpers.httpRequestWithAuthentication.call(this, 'openAssetApi', options);
+	const response: { statusCode: number; body: IDataObject | IDataObject[] | string | null } =
+		await this.helpers.httpRequestWithAuthentication.call(this, 'openAssetApi', options);
+
+	if (response.statusCode < 200 || response.statusCode >= 300) {
+		const details =
+			typeof response.body === 'string'
+				? response.body
+				: response.body == null
+					? ''
+					: JSON.stringify(response.body, null, 2);
+
+		throw new NodeApiError(this.getNode(), { statusCode: response.statusCode }, {
+			message: `OpenAsset request failed (HTTP ${response.statusCode})`,
+			httpCode: String(response.statusCode),
+			description: [
+				`${method} /${normalizedResource} failed (HTTP ${response.statusCode}).`,
+				details || 'OpenAsset returned no response body.',
+			].join('\n'),
+		});
+	}
+
+	return response.body;
 }
