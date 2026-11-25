@@ -1,5 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
+import { createProjectKeyword, projectKeywordCreateDescription } from './create';
 import { getProjectKeyword, projectKeywordGetDescription } from './get';
 import { getProjectKeywords, projectKeywordListDescription } from './getAll';
 import { projectKeywordUpdateDescription, updateProjectKeyword } from './update';
@@ -25,6 +26,12 @@ export const projectKeywordDescription: INodeProperties[] = [
 				description: 'Get a single project keyword by ID',
 			},
 			{
+				name: 'Create',
+				value: 'create',
+				action: 'Create a project keyword',
+				description: 'Create a project keyword record',
+			},
+			{
 				name: 'List',
 				value: 'list',
 				action: 'List project keywords',
@@ -41,10 +48,12 @@ export const projectKeywordDescription: INodeProperties[] = [
 	},
 	...projectKeywordGetDescription,
 	...projectKeywordListDescription,
+	...projectKeywordCreateDescription,
 	...projectKeywordUpdateDescription,
 ];
 
 export const projectKeywordOperations = {
+	create: createProjectKeyword,
 	get: getProjectKeyword,
 	list: getProjectKeywords,
 	update: updateProjectKeyword,

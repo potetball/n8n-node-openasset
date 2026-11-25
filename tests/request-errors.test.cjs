@@ -16,16 +16,25 @@ function response(body, statusCode = 200) {
 	return { body, statusCode, headers: {} };
 }
 
-function context(request, { continueOnFail = false, items = 1, body = { name: 'Updated' } } = {}) {
+function context(
+	request,
+	{
+		continueOnFail = false,
+		items = 1,
+		parameters = {},
+	} = {},
+) {
+	const nodeParameters = {
+		resource: 'project',
+		operation: 'update',
+		projectId: '123',
+		body: { name: 'Updated' },
+		...parameters,
+	};
 	return {
 		getNode: () => node,
 		getInputData: () => Array.from({ length: items }, () => ({ json: {} })),
-		getNodeParameter: (name) => ({
-			resource: 'project',
-			operation: 'update',
-			projectId: '123',
-			body,
-		})[name],
+		getNodeParameter: (name) => nodeParameters[name],
 		getCredentials: async () => ({ clientDomain: 'example' }),
 		continueOnFail: () => continueOnFail,
 		helpers: { httpRequestWithAuthentication: request },
@@ -114,7 +123,7 @@ test('local validation remains a NodeOperationError and does not make a request'
 	await assert.rejects(
 		OpenAsset.prototype.execute.call(context(async () => {
 			assert.fail('Should not make a request');
-		}, { body: {} })),
+		}, { parameters: { body: {} } })),
 		(error) => error instanceof NodeOperationError &&
 			error.message.includes('Add at least one field to update') &&
 			error.context.itemIndex === 0,
@@ -133,4 +142,23 @@ test('successful requests keep the existing URL, authentication, body, and outpu
 		return response({ id: 123, name: 'Updated' });
 	}));
 	assert.deepEqual(result, [[{ json: { id: 123, name: 'Updated' }, pairedItem: 0 }]]);
+});
+
+test('Project Keyword Create sends the supplied body to the Project Keywords endpoint', async () => {
+	const body = { name: 'Project keyword', project_keyword_category_id: 5 };
+	const result = await OpenAsset.prototype.execute.call(context(async (credentials, options) => {
+		assert.equal(credentials, 'openAssetApi');
+		assert.equal(options.url, 'https://example.openasset.com/REST/1/ProjectKeywords');
+		assert.equal(options.method, 'POST');
+		assert.deepEqual(options.body, body);
+		assert.equal(options.json, true);
+		return response({ id: 456, ...body });
+	}, {
+		parameters: {
+			resource: 'projectKeyword',
+			operation: 'create',
+			body,
+		},
+	}));
+	assert.deepEqual(result, [[{ json: { id: 456, ...body }, pairedItem: 0 }]]);
 });
